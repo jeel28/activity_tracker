@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  name      String
+  icon      String   @default("habit")
+  points    Int      @default(5)
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  logs      TaskLog[]
+}
+
+model TaskLog {
+  id        Int      @id @default(autoincrement())
+  taskId    Int
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  date      String   // YYYY-MM-DD
+  done      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([taskId, date])
+}
+
+model Todo {
+  id        Int      @id @default(autoincrement())
+  text      String
+  priority  String   @default("medium") // high | medium | low
+  dueDate   String?  // YYYY-MM-DD
+  done      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CalendarEvent {
+  id        Int      @id @default(autoincrement())
+  date      String   // YYYY-MM-DD
+  text      String
+  time      String?  // HH:MM
+  createdAt DateTime @default(now())
+}
